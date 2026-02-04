@@ -9,9 +9,10 @@
   <style>
     :root{
       --blue:#4338CA;
-      --cream:#FFFCFB;
+      --cream:#FFFCFB; /* dominant */
       --pink:#FFD8D8;
       --red:#ED3500;
+
       --bg: var(--cream);
       --panel: #ffffff;
       --text: #1f2937;
@@ -20,189 +21,595 @@
       --shadow: 0 20px 60px rgba(67,56,202,.15);
       --r: 18px;
     }
+
     *{box-sizing:border-box}
+
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
       background: var(--bg);
       line-height:1.45;
     }
-    .wrap{max-width:1200px; margin:0 auto; padding:28px}
-    header{display:flex; justify-content:space-between; gap:20px; margin-bottom:22px; flex-wrap:wrap;}
-    .title h1{margin:0; font-size:28px; color:var(--blue)}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px}
+
+    header{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+
+    .title h1{margin:0; font-size:28px; letter-spacing:.2px; color:var(--blue)}
     .title p{margin:8px 0 0; color:var(--muted)}
-    .badge{padding:10px 12px; border:1px solid rgba(67,56,202,.25); border-radius:999px; color:var(--blue); font-size:13px; font-weight:600;}
-    .grid{display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; align-items:start;}
-    @media (max-width: 900px){.grid{grid-template-columns:1fr}}
-    .panel{background:#fff; border:1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow); padding:18px;}
-    .panel.inputs{background:#FBEFEF; border-color: rgba(237,53,0,.1); box-shadow:none;}
-    h2{font-size:16px; color:var(--blue); margin:0 0 12px}
-    .subpanel{border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:12px; background:#fff;}
-    h3{font-size:14px; color:var(--blue); margin:0 0 10px}
-    .form{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-    @media (max-width:600px){.form{grid-template-columns:1fr}}
-    label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px}
-    input{width:100%; padding:11px 12px; border-radius:12px; border:1px solid var(--border); font-size:16px;}
-    input:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(67,56,202,.15);}    
-    button{padding:11px 14px; border-radius:12px; border:1px solid var(--blue); background:var(--blue); color:#fff; font-weight:700; cursor:pointer;}
-    button.secondary{background:#fff; color:var(--blue);}    
-    .cards{display:grid; gap:12px}
-    .card{border:1px solid var(--border); border-radius:16px; padding:14px; background:#fff;}
-    .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-    .kpi .item{border:1px solid var(--border); border-radius:14px; padding:10px;}
-    .kpi .span2{grid-column:1/-1}
-    .k{font-size:11px; color:var(--muted)}
-    .v{font-size:16px; margin-top:6px}
-    .decision{display:flex; justify-content:space-between; gap:20px; margin-top:18px; padding:22px; border-radius:18px; border:1px solid rgba(67,56,202,.2); background:linear-gradient(135deg, rgba(67,56,202,.06), rgba(255,216,216,.55));}
-    .pill{border:1px solid rgba(67,56,202,.4); border-radius:999px; padding:12px 16px; color:var(--blue); font-weight:600;}
-    footer{margin-top:20px; font-size:12px; color:var(--muted);}
+
+    .badge{
+      display:inline-flex; align-items:center;
+      padding:10px 12px;
+      border:1px solid rgba(67,56,202,.25);
+      border-radius:999px;
+      background: var(--cream);
+      box-shadow: 0 8px 24px rgba(67,56,202,.12);
+      white-space:nowrap;
+      color: var(--blue);
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .panel{
+      background: var(--panel);
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+
+    /* Highlight Inputs panel */
+    .panel.inputs{
+      background: #FBEFEF;
+      border-color: rgba(237,53,0,.10);
+      box-shadow: none;
+    }
+    .panel.inputs .subpanel{background:#fff}
+
+    .panel h2{margin:0 0 10px; font-size:16px; color:var(--blue); letter-spacing:.2px}
+
+    .subpanel{
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .subpanel h3{margin: 0 0 10px; font-size: 14px; color: var(--blue); letter-spacing: .2px;}
+
+    .subgrid{display:grid; grid-template-columns: 1fr; gap: 12px;}
+
+    .form{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 560px){ .form{grid-template-columns:1fr} }
+
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+
+    input{
+      width:100%;
+      padding:11px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: #ffffff;
+      color: var(--text);
+      outline:none;
+      font-size:16px; /* unified */
+    }
+
+    input::placeholder{ color: rgba(107,114,128,.75); }
+    input:disabled{ background: rgba(0,0,0,.03); color: rgba(31,41,55,.6); }
+
+    input:focus{border-color: var(--blue); box-shadow: 0 0 0 3px rgba(67,56,202,.15)}
+
+    .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:14px}
+
+    button{
+      padding:11px 14px;
+      border-radius: 12px;
+      border:1px solid var(--blue);
+      color:#ffffff;
+      background: var(--blue);
+      cursor:pointer;
+      font-weight:700;
+      transition: all .15s ease;
+    }
+
+    button:hover{background:#3730a3}
+    button:active{transform: translateY(1px)}
+
+    button.secondary{
+      background: var(--cream);
+      color: var(--blue);
+      border:1px solid rgba(67,56,202,.35);
+    }
+
+    button.secondary:hover{background: rgba(67,56,202,.06)}
+
+    .hint{color:var(--muted); font-size:12px}
+
+    .alert{
+      display:none;
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .alert.show{display:block}
+    .alert.bad{border-color: var(--red); background: var(--pink); color: #7a0f00}
+    .alert.good{border-color: rgba(67,56,202,.35); background: rgba(67,56,202,.06)}
+
+    .cards{display:grid; grid-template-columns: 1fr; gap:12px}
+
+    .card{
+      background: #fff;
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      padding:14px;
+    }
+
+    .card h3{margin:0 0 6px; font-size:14px; color:var(--blue)}
+
+    .kpi{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px}
+
+    .kpi .item{
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: #ffffff;
+    }
+
+    .kpi .item.span2{grid-column:1 / -1}
+    .kpi .item .k{font-size:11px; color:var(--muted)}
+    .kpi .item .v{margin-top:6px; font-size:16px; font-weight:400}
+
+    /* Value emphasis */
+    .value-positive{color: var(--blue);}
+    .value-negative{color: var(--red);}
+
+    /* Top accent bars for total cards */
+    .accent-positive{border-top:4px solid var(--blue);}
+    .accent-negative{border-top:4px solid var(--red);}
+
+    .decision{
+      display:flex; align-items:center; justify-content:space-between; gap:18px;
+      padding:22px;
+      border-radius: var(--r);
+      border:1px solid rgba(67,56,202,.18);
+      background: linear-gradient(135deg, rgba(67,56,202,.06), rgba(255,216,216,.55));
+      box-shadow: var(--shadow);
+    }
+
+    .decision .left{display:flex; flex-direction:column; gap:6px}
+    .decision .label{font-size:13px; color:var(--muted)}
+    .decision .big{font-size:16px; font-weight:400}
+
+    .pill{
+      padding:12px 16px;
+      border-radius:999px;
+      border:1px solid rgba(67,56,202,.45);
+      font-weight:600;
+      font-size:14px;
+      white-space:nowrap;
+      background: rgba(67,56,202,.12);
+      color: var(--blue);
+    }
+
+    footer{margin-top:18px; color:var(--muted); font-size:12px}
+    .mono{font-variant-numeric: tabular-nums}
   </style>
 </head>
+
 <body>
-<div class="wrap">
-<header>
-  <div class="title">
-    <h1>Apartment vs. Stocks — Investment Calculator</h1>
-    <p>Compare two investment options using your initial capital.</p>
-  </div>
-  <div class="badge">All amounts in USD</div>
-</header>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>Apartment vs. Stocks — Investment Calculator</h1>
+        <p>Compare outcomes after <span id="yearsInline" class="mono">—</span> years, assuming you already have initial capital (down payment).</p>
+      </div>
+      <div class="badge">All monetary amounts are in USD</div>
+    </header>
 
-<div class="grid">
-<section class="panel inputs">
-  <h2>Current Data Input</h2>
+    <div class="grid">
+      <!-- Inputs -->
+      <section class="panel inputs" aria-label="Inputs">
+        <h2>Current Data Input</h2>
 
-  <div class="subpanel">
-    <h3>Mortgage Calculation</h3>
-    <div class="form">
-      <div>
-        <label>Initial Capital / Down Payment</label>
-        <input id="downPayment" value="$300,000">
-      </div>
-      <div>
-        <label>Total Apartment Price</label>
-        <input id="apartmentPrice" value="$1,200,000">
-      </div>
-      <div>
-        <label>Mortgage Interest Rate (%)</label>
-        <input id="mortgageRate" value="5%">
-      </div>
-      <div>
-        <label>Fixed Monthly Mortgage Payment</label>
-        <input id="monthlyMortgage" value="$4,500">
-      </div>
-      <div>
-        <label>Monthly Rent</label>
-        <input id="monthlyRent" value="$4,500">
-      </div>
-      <div>
-        <label>Years of Apartment Ownership</label>
-        <input id="years" type="number" step="0.5" value="2">
-      </div>
-      <div>
-        <label>Apartment Selling Price</label>
-        <input id="sellPrice" value="$1,370,000">
-      </div>
+        <div class="subgrid">
+          <div class="subpanel">
+            <h3>Apartment Investment</h3>
+            <div class="form">
+              <div>
+                <label for="downPayment">Initial Capital / Down Payment</label>
+                <input id="downPayment" type="text" value="$300,000" inputmode="numeric" autocomplete="off" />
+              </div>
+
+              <div>
+                <label for="apartmentPrice">Total Apartment Price</label>
+                <input id="apartmentPrice" type="text" value="$1,200,000" inputmode="numeric" autocomplete="off" />
+              </div>
+
+              <div>
+                <label for="mortgageMultiplier">Mortgage Interest Rate (%)</label>
+                <input id="mortgageMultiplier" type="text" value="5%" inputmode="decimal" autocomplete="off" />
+              </div>
+
+              <div>
+                <label for="monthlyMortgage">Fixed Monthly Mortgage Payment</label>
+                <input id="monthlyMortgage" type="text" value="$4,500" inputmode="numeric" autocomplete="off" />
+              </div>
+
+              <div>
+                <label for="monthlyRent">Monthly Rent</label>
+                <input id="monthlyRent" type="text" value="$4,500" inputmode="numeric" autocomplete="off" />
+              </div>
+
+              <div>
+                <label for="years">Years of Apartment Ownership</label>
+                <input id="years" type="number" step="0.5" value="2" min="0.5" />
+              </div>
+
+              <div>
+                <label for="sellPrice">Apartment Selling Price</label>
+                <input id="sellPrice" type="text" value="$1,370,000" inputmode="numeric" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <div class="subpanel">
+            <h3>Stocks Investment</h3>
+            <div class="form">
+              <div>
+                <label for="stockGrowth">Stocks Yearly Return (%)</label>
+                <input id="stockGrowth" type="text" value="8%" inputmode="decimal" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <button id="calcBtn" type="button">Calculate</button>
+          <button class="secondary" id="resetBtn" type="button">Reset defaults</button>
+          <span class="hint">Rent margin is computed as Rent − Fixed Monthly Mortgage Payment.</span>
+        </div>
+
+        <div id="rentAlert" class="alert" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- Results -->
+      <section class="panel" aria-label="Results">
+        <h2>Results</h2>
+
+        <div class="cards">
+          <!-- Mortgage Calculation -->
+          <div class="card">
+            <h3>Mortgage Calculation</h3>
+            <div class="kpi">
+              <div class="item">
+                <div class="k">Total Mortgage</div>
+                <div class="v mono" id="mortgageAmount">—</div>
+              </div>
+              <div class="item">
+                <div class="k">Paid Mortgage so far</div>
+                <div class="v mono" id="paidMortgage">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apartment Margin -->
+          <div class="card">
+            <h3>Apartment Margin</h3>
+
+            <div class="kpi">
+              <div class="item">
+                <div class="k">Margin from Selling</div>
+                <div class="v mono" id="marginSelling">—</div>
+              </div>
+              <div class="item">
+                <div class="k">Margin from Rent</div>
+                <div class="v mono" id="marginRent">—</div>
+              </div>
+            </div>
+
+            <div class="kpi" style="margin-top:10px">
+              <div class="item span2" id="aptTotalBox">
+                <div class="k">Total Profit/Loss</div>
+                <div class="v mono" id="aptProfit">—</div>
+              </div>
+            </div>
+
+            <div class="kpi" style="margin-top:10px">
+              <div class="item">
+                <div class="k">Profit/Loss per Year</div>
+                <div class="v mono" id="aptPerYear">—</div>
+              </div>
+              <div class="item">
+                <div class="k">Profit/Loss per Month</div>
+                <div class="v mono" id="aptPerMonth">—</div>
+              </div>
+              <div class="item span2">
+                <div class="k">Annual Return (%)</div>
+                <div class="v mono" id="aptYearlyGrowth">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stocks Margin -->
+          <div class="card">
+            <h3>Stocks Margin</h3>
+
+            <div class="kpi">
+              <div class="item span2" id="stocksTotalBox">
+                <div class="k">Total Profit/Loss (Compounded)</div>
+                <div class="v mono" id="stocksProfit">—</div>
+              </div>
+            </div>
+
+            <div class="kpi" style="margin-top:10px">
+              <div class="item">
+                <div class="k">Profit/Loss per Year</div>
+                <div class="v mono" id="stocksPerYear">—</div>
+              </div>
+              <div class="item">
+                <div class="k">Profit/Loss per Month</div>
+                <div class="v mono" id="stocksPerMonth">—</div>
+              </div>
+              <div class="item span2">
+                <div class="k">Annual Return (%)</div>
+                <div class="v mono" id="stocksYearlyGrowth">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  </div>
 
-  <div class="subpanel">
-    <h3>Stocks Investment</h3>
-    <div class="form">
-      <div>
-        <label>Stocks Yearly Return (%)</label>
-        <input id="stockGrowth" value="8%">
+    <!-- Final decision -->
+    <section class="panel" aria-label="Final decision" style="margin-top:18px">
+      <h2>Final Decision</h2>
+      <div class="decision" role="status" aria-live="polite">
+        <div class="left">
+          <div class="label">Total Additional Margin</div>
+          <div class="big mono" id="difference">—</div>
+          <div class="hint" id="decisionText" style="margin-top:6px">—</div>
+        </div>
+        <div class="pill" id="decisionPill">—</div>
       </div>
-    </div>
+    </section>
+
+    <footer>
+      It’s a simplified model and not financial advice.
+      <br />
+      Mortgage note: This calculator assumes a fixed interest rate added once to the loan principal (principal × (1 + rate)). Real mortgages may differ.
+      <br />
+      Stocks profit is based on compound annual growth (compound interest).
+      <br />
+      Annual Return (%) is calculated as Profit/Loss per Year ÷ Initial Capital / Down Payment.
+    </footer>
   </div>
 
-  <div style="margin-top:12px">
-    <button onclick="calculate()">Calculate</button>
-    <button class="secondary" onclick="location.reload()">Reset</button>
-  </div>
-</section>
+  <script>
+    const $ = (id) => document.getElementById(id);
 
-<section class="panel">
-  <h2>Results</h2>
+    function setText(id, text){
+      const el = $(id);
+      if (!el) return;
+      el.textContent = text;
+    }
 
-  <div class="cards">
-    <div class="card">
-      <h3>Mortgage Calculation</h3>
-      <div class="kpi">
-        <div class="item"><div class="k">Total Mortgage</div><div class="v" id="mortgageTotal">—</div></div>
-        <div class="item"><div class="k">Paid Mortgage so far</div><div class="v" id="mortgagePaid">—</div></div>
-      </div>
-    </div>
+    const defaults = {
+      downPayment: 300000,
+      apartmentPrice: 1200000,
+      mortgageInterestPct: 5,
+      monthlyMortgage: 4500,
+      monthlyRent: 4500,
+      years: 2,
+      sellPrice: 1370000,
+      stockGrowthPct: 8,
+    };
 
-    <div class="card">
-      <h3>Apartment Margin</h3>
-      <div class="kpi">
-        <div class="item"><div class="k">Margin from Selling</div><div class="v" id="aptSell">—</div></div>
-        <div class="item"><div class="k">Margin from Rent</div><div class="v" id="aptRent">—</div></div>
-        <div class="item span2"><div class="k">Total Profit/Loss</div><div class="v" id="aptTotal">—</div></div>
-      </div>
-    </div>
+    function num(v){
+      // Accept formatted strings like "$1,200,000", "8%", "5 %", negatives
+      if (typeof v === 'string'){
+        const cleaned = v.replace(/[^0-9.-]/g,'');
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : NaN;
+      }
+      const n = Number(v);
+      return Number.isFinite(n) ? n : NaN;
+    }
 
-    <div class="card">
-      <h3>Stocks Margin</h3>
-      <div class="kpi">
-        <div class="item span2"><div class="k">Total Profit/Loss (Compounded)</div><div class="v" id="stocksTotal">—</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-</div>
+    function plain(n){
+      if (!Number.isFinite(n)) return '—';
+      return new Intl.NumberFormat('en-US', { maximumFractionDigits:0 }).format(n);
+    }
 
-<section class="panel">
-  <h2>Final Decision</h2>
-  <div class="decision">
-    <div>
-      <div class="k">Total Additional Margin</div>
-      <div class="v" id="difference">—</div>
-    </div>
-    <div class="pill" id="decision">—</div>
-  </div>
-</section>
+    function pct01(n01){
+      if (!Number.isFinite(n01)) return '—';
+      return new Intl.NumberFormat('en-US', { style:'percent', maximumFractionDigits:2 }).format(n01);
+    }
 
-<footer>
-  This calculator is for educational purposes only and does not constitute financial advice.
-</footer>
-</div>
+    function money(n){
+      if (!Number.isFinite(n)) return '—';
+      const sign = n < 0 ? '-' : '';
+      const abs = Math.abs(n);
+      return `${sign}$${plain(abs)}`;
+    }
 
-<script>
-function num(v){return Number(v.replace(/[^0-9.-]/g,''))}
-function money(n){return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString()}
+    function formatMoneyInput(el){
+      const n = num(el.value);
+      if (!Number.isFinite(n)) return;
+      el.value = money(n);
+    }
 
-function calculate(){
-  const down=num(downPayment.value)
-  const price=num(apartmentPrice.value)
-  const rate=num(mortgageRate.value)/100
-  const monthly=num(monthlyMortgage.value)
-  const rent=num(monthlyRent.value)
-  const years=Number(document.getElementById('years').value)
-  const sell=num(sellPrice.value)
-  const stockRate=num(stockGrowth.value)/100
+    function formatPercentInput(el){
+      const n = num(el.value);
+      if (!Number.isFinite(n)) return;
+      el.value = `${n}%`;
+    }
 
-  const loan=price-down
-  const totalMortgage=loan*(1+rate)
-  const paid=monthly*12*years
-  const rentMargin=(rent-monthly)*12*years
-  const sellMargin=sell-price
-  const aptTotal=rentMargin+sellMargin-paid
+    function setDecision(diff){
+      const pill = $('decisionPill');
+      const text = $('decisionText');
+      if (!pill || !text) return;
 
-  const stocksTotal=down*Math.pow(1+stockRate,years)-down
-  const diff=aptTotal-stocksTotal
+      if (!Number.isFinite(diff)){
+        pill.textContent = '—';
+        text.textContent = '—';
+        return;
+      }
 
-  mortgageTotal.textContent=money(totalMortgage)
-  mortgagePaid.textContent=money(paid)
-  aptSell.textContent=money(sellMargin)
-  aptRent.textContent=money(rentMargin)
-  aptTotal.textContent=money(aptTotal)
-  stocksTotal.textContent=money(stocksTotal)
-  difference.textContent=money(diff)
-  decision.textContent=diff>0?'Apartment':diff<0?'Stocks':'Equal'
-}
-</script>
+      const abs = Math.abs(diff);
+
+      if (diff > 0){
+        pill.textContent = 'Apartment';
+        text.textContent = `You will gain an additional margin of ${money(abs)} if you invest your initial capital in an apartment.`;
+      } else if (diff < 0){
+        pill.textContent = 'Stocks';
+        text.textContent = `You will gain an additional margin of ${money(abs)} if you invest your initial capital in stocks.`;
+      } else {
+        pill.textContent = 'Equal Outcome';
+        text.textContent = 'Both investment options result in the same total margin.';
+      }
+    }
+
+    function applyValueEmphasis(value, valueEl, boxEl){
+      if (!valueEl || !boxEl) return;
+      valueEl.classList.toggle('value-positive', value > 0);
+      valueEl.classList.toggle('value-negative', value < 0);
+      boxEl.classList.toggle('accent-positive', value > 0);
+      boxEl.classList.toggle('accent-negative', value < 0);
+    }
+
+    function calculate(){
+      const down = num($('downPayment')?.value);
+      const buy = num($('apartmentPrice')?.value);
+      const interestRate = num($('mortgageMultiplier')?.value) / 100;
+      const mortMonthly = num($('monthlyMortgage')?.value);
+      const rentMonthly = num($('monthlyRent')?.value);
+      const years = Math.max(0.5, num($('years')?.value));
+      const sell = num($('sellPrice')?.value);
+      const stockG = num($('stockGrowth')?.value) / 100;
+
+      setText('yearsInline', years.toString());
+
+      const required = [down, buy, interestRate, mortMonthly, rentMonthly, years, sell, stockG];
+      if (required.some(v => !Number.isFinite(v))){
+        alert('Please fill all fields with valid numbers.');
+        return;
+      }
+      if (buy < down){
+        alert('Apartment price should be greater than or equal to the down payment.');
+        return;
+      }
+
+      // Monthly apartment margin (computed)
+      const rentMarginMonthly = rentMonthly - mortMonthly;
+
+      const rentAlert = $('rentAlert');
+      if (rentAlert){
+        rentAlert.classList.remove('show','bad','good');
+        if (rentMarginMonthly < 0){
+          rentAlert.classList.add('show','bad');
+          rentAlert.textContent = `Warning: Your monthly apartment margin is negative (${money(rentMarginMonthly)}). This means rent does not cover the monthly mortgage payment.`;
+        } else if (rentMarginMonthly > 0){
+          rentAlert.classList.add('show','good');
+          rentAlert.textContent = `Good: Your monthly apartment margin is positive (${money(rentMarginMonthly)}).`;
+        }
+      }
+
+      // Mortgage principal plus interest (interest added on top of 100%)
+      const mortgageAmount = (buy - down) * (1 + interestRate);
+      const months = years * 12;
+      const paidMortgage = mortMonthly * months;
+
+      const marginSelling = sell - down - mortgageAmount;
+      const marginRent = rentMarginMonthly * months;
+
+      const aptProfit = (marginSelling + marginRent);
+      const aptPerYear = aptProfit / years;
+      const aptPerMonth = aptPerYear / 12;
+      const aptAnnualReturn = aptPerYear / down;
+
+      const stocksInitial = down;
+      const stocksProfit = (stocksInitial * Math.pow(1 + stockG, years)) - stocksInitial; // compounded
+      const stocksPerYear = stocksProfit / years;
+      const stocksPerMonth = stocksPerYear / 12;
+      const stocksAnnualReturn = stocksPerYear / stocksInitial;
+
+      const diff = aptProfit - stocksProfit;
+      setDecision(diff);
+
+      // Render
+      setText('mortgageAmount', money(mortgageAmount));
+      setText('paidMortgage', money(paidMortgage));
+      setText('marginSelling', money(marginSelling));
+      setText('marginRent', money(marginRent));
+
+      setText('aptProfit', money(aptProfit));
+      setText('aptPerYear', money(aptPerYear));
+      setText('aptPerMonth', money(aptPerMonth));
+      setText('aptYearlyGrowth', pct01(aptAnnualReturn));
+      applyValueEmphasis(aptProfit, $('aptProfit'), $('aptTotalBox'));
+
+      setText('stocksProfit', money(stocksProfit));
+      setText('stocksPerYear', money(stocksPerYear));
+      setText('stocksPerMonth', money(stocksPerMonth));
+      setText('stocksYearlyGrowth', pct01(stocksAnnualReturn));
+      applyValueEmphasis(stocksProfit, $('stocksProfit'), $('stocksTotalBox'));
+
+      setText('difference', money(diff));
+    }
+
+    function setDefaults(){
+      const dp = $('downPayment'); if (dp) dp.value = money(defaults.downPayment);
+      const ap = $('apartmentPrice'); if (ap) ap.value = money(defaults.apartmentPrice);
+      const mi = $('mortgageMultiplier'); if (mi) mi.value = defaults.mortgageInterestPct + '%';
+      const mm = $('monthlyMortgage'); if (mm) mm.value = money(defaults.monthlyMortgage);
+      const mr = $('monthlyRent'); if (mr) mr.value = money(defaults.monthlyRent);
+      const y = $('years'); if (y) y.value = defaults.years;
+      const sp = $('sellPrice'); if (sp) sp.value = money(defaults.sellPrice);
+      const sg = $('stockGrowth'); if (sg) sg.value = defaults.stockGrowthPct + '%';
+      calculate();
+    }
+
+    // Format on blur
+    ['downPayment','apartmentPrice','monthlyMortgage','monthlyRent','sellPrice'].forEach(id=>{
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener('blur', ()=>formatMoneyInput(el));
+    });
+    ['mortgageMultiplier','stockGrowth'].forEach(id=>{
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener('blur', ()=>formatPercentInput(el));
+    });
+
+    $('calcBtn')?.addEventListener('click', calculate);
+    $('resetBtn')?.addEventListener('click', setDefaults);
+
+    window.addEventListener('load', () => {
+      setDefaults();
+    });
+  </script>
 </body>
 </html>
