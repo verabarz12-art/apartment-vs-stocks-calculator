@@ -5,7 +5,7 @@ A simple web-based calculator to compare investing initial capital in:
 - Investing the same amount in stocks
 
 ## 🔗 Live Demo
-https://vera-barzman.github.io/apartment-vs-stocks-calculator/
+https://verabarz12-art.github.io/apartment-vs-stocks-calculator/
 
 ## 🧠 What it does
 - Calculates mortgage costs and rent margin
