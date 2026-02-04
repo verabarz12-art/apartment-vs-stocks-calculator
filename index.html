@@ -144,6 +144,9 @@
         <div class="item"><div class="k">Margin from Selling</div><div class="v" id="aptSell">—</div></div>
         <div class="item"><div class="k">Margin from Rent</div><div class="v" id="aptRent">—</div></div>
         <div class="item span2"><div class="k">Total Profit/Loss</div><div class="v" id="aptTotal">—</div></div>
+        <div class="item"><div class="k">Profit/Loss per Year</div><div class="v" id="aptPerYear">—</div></div>
+        <div class="item"><div class="k">Profit/Loss per Month</div><div class="v" id="aptPerMonth">—</div></div>
+        <div class="item span2"><div class="k">Annual Return (%)</div><div class="v" id="aptReturn">—</div></div>
       </div>
     </div>
 
@@ -151,6 +154,9 @@
       <h3>Stocks Margin</h3>
       <div class="kpi">
         <div class="item span2"><div class="k">Total Profit/Loss (Compounded)</div><div class="v" id="stocksTotal">—</div></div>
+        <div class="item"><div class="k">Profit/Loss per Year</div><div class="v" id="stocksPerYear">—</div></div>
+        <div class="item"><div class="k">Profit/Loss per Month</div><div class="v" id="stocksPerMonth">—</div></div>
+        <div class="item span2"><div class="k">Annual Return (%)</div><div class="v" id="stocksReturn">—</div></div>
       </div>
     </div>
   </div>
@@ -174,38 +180,157 @@
 </div>
 
 <script>
-function num(v){return Number(v.replace(/[^0-9.-]/g,''))}
-function money(n){return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString()}
+  const $ = (id) => document.getElementById(id);
 
-function calculate(){
-  const down=num(downPayment.value)
-  const price=num(apartmentPrice.value)
-  const rate=num(mortgageRate.value)/100
-  const monthly=num(monthlyMortgage.value)
-  const rent=num(monthlyRent.value)
-  const years=Number(document.getElementById('years').value)
-  const sell=num(sellPrice.value)
-  const stockRate=num(stockGrowth.value)/100
+  function num(v){
+    if (v == null) return NaN;
+    const s = String(v);
+    const cleaned = s.replace(/[^0-9.-]/g,'');
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : NaN;
+  }
 
-  const loan=price-down
-  const totalMortgage=loan*(1+rate)
-  const paid=monthly*12*years
-  const rentMargin=(rent-monthly)*12*years
-  const sellMargin=sell-price
-  const aptTotal=rentMargin+sellMargin-paid
+  function plainInt(n){
+    return new Intl.NumberFormat('en-US', { maximumFractionDigits:0 }).format(Math.round(n));
+  }
 
-  const stocksTotal=down*Math.pow(1+stockRate,years)-down
-  const diff=aptTotal-stocksTotal
+  function money(n){
+    if (!Number.isFinite(n)) return '—';
+    const sign = n < 0 ? '-' : '';
+    return `${sign}$${plainInt(Math.abs(n))}`;
+  }
 
-  mortgageTotal.textContent=money(totalMortgage)
-  mortgagePaid.textContent=money(paid)
-  aptSell.textContent=money(sellMargin)
-  aptRent.textContent=money(rentMargin)
-  aptTotal.textContent=money(aptTotal)
-  stocksTotal.textContent=money(stocksTotal)
-  difference.textContent=money(diff)
-  decision.textContent=diff>0?'Apartment':diff<0?'Stocks':'Equal'
-}
+  function pct(n01){
+    if (!Number.isFinite(n01)) return '—';
+    return new Intl.NumberFormat('en-US', { style:'percent', maximumFractionDigits:2 }).format(n01);
+  }
+
+  function formatMoneyInput(id){
+    const el = $(id);
+    if (!el) return;
+    const n = num(el.value);
+    if (!Number.isFinite(n)) return;
+    el.value = money(n);
+  }
+
+  function formatPercentInput(id){
+    const el = $(id);
+    if (!el) return;
+    const n = num(el.value);
+    if (!Number.isFinite(n)) return;
+    el.value = `${n}%`;
+  }
+
+  function setText(id, text){
+    const el = $(id);
+    if (!el) return;
+    el.textContent = text;
+  }
+
+  function calculate(){
+    const down = num($('downPayment')?.value);
+    const price = num($('apartmentPrice')?.value);
+    const rate = num($('mortgageRate')?.value) / 100; // 5% -> 0.05
+    const monthly = num($('monthlyMortgage')?.value);
+    const rent = num($('monthlyRent')?.value);
+    const years = Number($('years')?.value);
+    const sell = num($('sellPrice')?.value);
+    const stockRate = num($('stockGrowth')?.value) / 100;
+
+    const required = [down, price, rate, monthly, rent, years, sell, stockRate];
+    if (required.some(v => !Number.isFinite(v))){
+      alert('Please fill all fields with valid numbers.');
+      return;
+    }
+    if (years <= 0){
+      alert('Years of Apartment Ownership must be greater than 0.');
+      return;
+    }
+    if (price < down){
+      alert('Total Apartment Price should be greater than or equal to Initial Capital / Down Payment.');
+      return;
+    }
+
+    // Monthly margin (computed, not shown in UI)
+    const rentMarginMonthly = rent - monthly;
+    const months = years * 12;
+
+    // Mortgage principal + interest (interest added on top of 100%)
+    const mortgageAmount = (price - down) * (1 + rate);
+    const paidMortgage = monthly * months;
+
+    // Apartment profits (not compounded)
+    const marginSelling = sell - down - mortgageAmount;
+    const marginRent = rentMarginMonthly * months;
+    const aptTotal = marginSelling + marginRent;
+
+    const aptPerYear = aptTotal / years;
+    const aptPerMonth = aptPerYear / 12;
+    const aptAnnual = aptPerYear / down;
+
+    // Stocks profit (compounded)
+    const stocksTotal = (down * Math.pow(1 + stockRate, years)) - down;
+    const stocksPerYear = stocksTotal / years;
+    const stocksPerMonth = stocksPerYear / 12;
+    const stocksAnnual = stocksPerYear / down;
+
+    // Final decision
+    const diff = aptTotal - stocksTotal;
+
+    setText('mortgageTotal', money(mortgageAmount));
+    setText('mortgagePaid', money(paidMortgage));
+
+    setText('aptSell', money(marginSelling));
+    setText('aptRent', money(marginRent));
+    setText('aptTotal', money(aptTotal));
+    setText('aptPerYear', money(aptPerYear));
+    setText('aptPerMonth', money(aptPerMonth));
+    setText('aptAnnual', pct(aptAnnual));
+
+    setText('stocksTotal', money(stocksTotal));
+    setText('stocksPerYear', money(stocksPerYear));
+    setText('stocksPerMonth', money(stocksPerMonth));
+    setText('stocksAnnual', pct(stocksAnnual));
+
+    setText('difference', money(diff));
+
+    const decision = $('decision');
+    const decisionText = $('decisionText');
+    if (decision){
+      if (diff > 0) decision.textContent = 'Apartment';
+      else if (diff < 0) decision.textContent = 'Stocks';
+      else decision.textContent = 'Equal Outcome';
+    }
+    if (decisionText){
+      const abs = Math.abs(diff);
+      if (diff > 0) decisionText.textContent = `You will gain an additional margin of ${money(abs)} if you invest your initial capital in Apartment.`;
+      else if (diff < 0) decisionText.textContent = `You will gain an additional margin of ${money(abs)} if you invest your initial capital in Stocks.`;
+      else decisionText.textContent = 'Both investment options result in the same total margin.';
+    }
+  }
+
+  // Bind buttons (so it works even if onclick attributes change)
+  window.calculate = calculate;
+
+  // Format on blur
+  ['downPayment','apartmentPrice','monthlyMortgage','monthlyRent','sellPrice'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('blur', () => formatMoneyInput(id));
+  });
+  ['mortgageRate','stockGrowth'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('blur', () => formatPercentInput(id));
+  });
+
+  // Auto-calc on load
+  window.addEventListener('load', () => {
+    // normalize formatting once
+    ['downPayment','apartmentPrice','monthlyMortgage','monthlyRent','sellPrice'].forEach(formatMoneyInput);
+    ['mortgageRate','stockGrowth'].forEach(formatPercentInput);
+    calculate();
+  });
 </script>
 </body>
 </html>
