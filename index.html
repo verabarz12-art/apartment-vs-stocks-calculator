@@ -280,7 +280,8 @@
               <div>
                 <label for="capitalGainsTax">Capital Gains Tax (%)</label>
                 <input id="capitalGainsTax" type="text" value="25%" inputmode="decimal" autocomplete="off" />
-          </div>
+              </div>
+            </div>
           </div>
 
           <div class="subpanel">
@@ -311,7 +312,36 @@
           <!-- Mortgage Calculation -->
           <div class="card">
             <h3>Mortgage Calculation</h3>
-            $1
+            <div class="kpi">
+              <div class="item">
+                <div class="k">Total Mortgage</div>
+                <div class="v mono" id="mortgageAmount">—</div>
+              </div>
+              <div class="item">
+                <div class="k">Paid Mortgage so far</div>
+                <div class="v mono" id="paidMortgage">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apartment Margin -->
+          <div class="card">
+            <h3>Apartment Margin</h3>
+
+            <div class="kpi">
+              <div class="item">
+                <div class="k">Margin from Selling</div>
+                <div class="v mono" id="marginSelling">—</div>
+              </div>
+              <div class="item">
+                <div class="k">Margin from Rent</div>
+                <div class="v mono" id="marginRent">—</div>
+              </div>
+              <div class="item span2">
+                <div class="k">Tax</div>
+                <div class="v mono" id="aptTax">—</div>
+              </div>
+            </div>
 
             <div class="kpi" style="margin-top:10px">
               <div class="item span2" id="aptTotalBox">
