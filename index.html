@@ -26,13 +26,14 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
       background: var(--bg);
+      line-height:1.45;
     }
-    .wrap{max-width:1100px; margin:0 auto; padding:28px}
+    .wrap{max-width:1200px; margin:0 auto; padding:28px}
     header{display:flex; justify-content:space-between; gap:20px; margin-bottom:22px; flex-wrap:wrap;}
     .title h1{margin:0; font-size:28px; color:var(--blue)}
     .title p{margin:8px 0 0; color:var(--muted)}
     .badge{padding:10px 12px; border:1px solid rgba(67,56,202,.25); border-radius:999px; color:var(--blue); font-size:13px; font-weight:600;}
-    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:18px;}
+    .grid{display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; align-items:start;}
     @media (max-width: 900px){.grid{grid-template-columns:1fr}}
     .panel{background:#fff; border:1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow); padding:18px;}
     .panel.inputs{background:#FBEFEF; border-color: rgba(237,53,0,.1); box-shadow:none;}
@@ -43,9 +44,9 @@
     @media (max-width:600px){.form{grid-template-columns:1fr}}
     label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px}
     input{width:100%; padding:11px 12px; border-radius:12px; border:1px solid var(--border); font-size:16px;}
-    input:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(67,56,202,.15);}
+    input:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(67,56,202,.15);}    
     button{padding:11px 14px; border-radius:12px; border:1px solid var(--blue); background:var(--blue); color:#fff; font-weight:700; cursor:pointer;}
-    button.secondary{background:#fff; color:var(--blue);}
+    button.secondary{background:#fff; color:var(--blue);}    
     .cards{display:grid; gap:12px}
     .card{border:1px solid var(--border); border-radius:16px; padding:14px; background:#fff;}
     .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
@@ -67,14 +68,141 @@
   </div>
   <div class="badge">All amounts in USD</div>
 </header>
+
 <div class="grid">
 <section class="panel inputs">
   <h2>Current Data Input</h2>
-  <div class="subpanel"><h3>Mortgage Calculation</h3></div>
+
+  <div class="subpanel">
+    <h3>Mortgage Calculation</h3>
+    <div class="form">
+      <div>
+        <label>Initial Capital / Down Payment</label>
+        <input id="downPayment" value="$300,000">
+      </div>
+      <div>
+        <label>Total Apartment Price</label>
+        <input id="apartmentPrice" value="$1,200,000">
+      </div>
+      <div>
+        <label>Mortgage Interest Rate (%)</label>
+        <input id="mortgageRate" value="5%">
+      </div>
+      <div>
+        <label>Fixed Monthly Mortgage Payment</label>
+        <input id="monthlyMortgage" value="$4,500">
+      </div>
+      <div>
+        <label>Monthly Rent</label>
+        <input id="monthlyRent" value="$4,500">
+      </div>
+      <div>
+        <label>Years of Apartment Ownership</label>
+        <input id="years" type="number" step="0.5" value="2">
+      </div>
+      <div>
+        <label>Apartment Selling Price</label>
+        <input id="sellPrice" value="$1,370,000">
+      </div>
+    </div>
+  </div>
+
+  <div class="subpanel">
+    <h3>Stocks Investment</h3>
+    <div class="form">
+      <div>
+        <label>Stocks Yearly Return (%)</label>
+        <input id="stockGrowth" value="8%">
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px">
+    <button onclick="calculate()">Calculate</button>
+    <button class="secondary" onclick="location.reload()">Reset</button>
+  </div>
 </section>
-<section class="panel"><h2>Results</h2></section>
+
+<section class="panel">
+  <h2>Results</h2>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Mortgage Calculation</h3>
+      <div class="kpi">
+        <div class="item"><div class="k">Total Mortgage</div><div class="v" id="mortgageTotal">—</div></div>
+        <div class="item"><div class="k">Paid Mortgage so far</div><div class="v" id="mortgagePaid">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Apartment Margin</h3>
+      <div class="kpi">
+        <div class="item"><div class="k">Margin from Selling</div><div class="v" id="aptSell">—</div></div>
+        <div class="item"><div class="k">Margin from Rent</div><div class="v" id="aptRent">—</div></div>
+        <div class="item span2"><div class="k">Total Profit/Loss</div><div class="v" id="aptTotal">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Stocks Margin</h3>
+      <div class="kpi">
+        <div class="item span2"><div class="k">Total Profit/Loss (Compounded)</div><div class="v" id="stocksTotal">—</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 </div>
-<footer>This calculator is for educational purposes only and does not constitute financial advice.</footer>
+
+<section class="panel">
+  <h2>Final Decision</h2>
+  <div class="decision">
+    <div>
+      <div class="k">Total Additional Margin</div>
+      <div class="v" id="difference">—</div>
+    </div>
+    <div class="pill" id="decision">—</div>
+  </div>
+</section>
+
+<footer>
+  This calculator is for educational purposes only and does not constitute financial advice.
+</footer>
 </div>
+
+<script>
+function num(v){return Number(v.replace(/[^0-9.-]/g,''))}
+function money(n){return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString()}
+
+function calculate(){
+  const down=num(downPayment.value)
+  const price=num(apartmentPrice.value)
+  const rate=num(mortgageRate.value)/100
+  const monthly=num(monthlyMortgage.value)
+  const rent=num(monthlyRent.value)
+  const years=Number(document.getElementById('years').value)
+  const sell=num(sellPrice.value)
+  const stockRate=num(stockGrowth.value)/100
+
+  const loan=price-down
+  const totalMortgage=loan*(1+rate)
+  const paid=monthly*12*years
+  const rentMargin=(rent-monthly)*12*years
+  const sellMargin=sell-price
+  const aptTotal=rentMargin+sellMargin-paid
+
+  const stocksTotal=down*Math.pow(1+stockRate,years)-down
+  const diff=aptTotal-stocksTotal
+
+  mortgageTotal.textContent=money(totalMortgage)
+  mortgagePaid.textContent=money(paid)
+  aptSell.textContent=money(sellMargin)
+  aptRent.textContent=money(rentMargin)
+  aptTotal.textContent=money(aptTotal)
+  stocksTotal.textContent=money(stocksTotal)
+  difference.textContent=money(diff)
+  decision.textContent=diff>0?'Apartment':diff<0?'Stocks':'Equal'
+}
+</script>
 </body>
 </html>
