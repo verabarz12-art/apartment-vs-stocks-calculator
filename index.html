@@ -582,7 +582,7 @@
       setText('stocksYearlyGrowth', pct01(stocksAnnualReturn));
       applyValueEmphasis(stocksProfit, $('stocksProfit'), $('stocksTotalBox'));
 
-      setText('difference', money(diff));
+      setText('difference', money(Math.abs(diff)));
     }
 
     function setDefaults(){
