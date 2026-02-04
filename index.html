@@ -276,7 +276,11 @@
                 <label for="sellPrice">Apartment Selling Price</label>
                 <input id="sellPrice" type="text" value="$1,370,000" inputmode="numeric" autocomplete="off" />
               </div>
-            </div>
+
+              <div>
+                <label for="capitalGainsTax">Capital Gains Tax (%)</label>
+                <input id="capitalGainsTax" type="text" value="25%" inputmode="decimal" autocomplete="off" />
+          </div>
           </div>
 
           <div class="subpanel">
@@ -307,32 +311,7 @@
           <!-- Mortgage Calculation -->
           <div class="card">
             <h3>Mortgage Calculation</h3>
-            <div class="kpi">
-              <div class="item">
-                <div class="k">Total Mortgage</div>
-                <div class="v mono" id="mortgageAmount">—</div>
-              </div>
-              <div class="item">
-                <div class="k">Paid Mortgage so far</div>
-                <div class="v mono" id="paidMortgage">—</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Apartment Margin -->
-          <div class="card">
-            <h3>Apartment Margin</h3>
-
-            <div class="kpi">
-              <div class="item">
-                <div class="k">Margin from Selling</div>
-                <div class="v mono" id="marginSelling">—</div>
-              </div>
-              <div class="item">
-                <div class="k">Margin from Rent</div>
-                <div class="v mono" id="marginRent">—</div>
-              </div>
-            </div>
+            $1
 
             <div class="kpi" style="margin-top:10px">
               <div class="item span2" id="aptTotalBox">
@@ -430,6 +409,7 @@
       years: 2,
       sellPrice: 1370000,
       stockGrowthPct: 8,
+      capitalGainsTaxPct: 25,
     };
 
     function num(v){
@@ -509,6 +489,7 @@
       const down = num($('downPayment')?.value);
       const buy = num($('apartmentPrice')?.value);
       const interestRate = num($('mortgageMultiplier')?.value) / 100;
+      const capitalGainsTaxRate = num($('capitalGainsTax')?.value) / 100;
       const mortMonthly = num($('monthlyMortgage')?.value);
       const rentMonthly = num($('monthlyRent')?.value);
       const years = Math.max(0.5, num($('years')?.value));
@@ -548,9 +529,10 @@
       const paidMortgage = mortMonthly * months;
 
       const marginSelling = sell - down - mortgageAmount;
+      const capitalGainsTax = marginSelling > 0 ? marginSelling * capitalGainsTaxRate : 0;
       const marginRent = rentMarginMonthly * months;
 
-      const aptProfit = (marginSelling + marginRent);
+      const aptProfit = (marginSelling + marginRent) - capitalGainsTax;
       const aptPerYear = aptProfit / years;
       const aptPerMonth = aptPerYear / 12;
       const aptAnnualReturn = aptPerYear / down;
@@ -569,6 +551,7 @@
       setText('paidMortgage', money(paidMortgage));
       setText('marginSelling', money(marginSelling));
       setText('marginRent', money(marginRent));
+      setText('aptTax', money(capitalGainsTax));
 
       setText('aptProfit', money(aptProfit));
       setText('aptPerYear', money(aptPerYear));
@@ -594,6 +577,7 @@
       const y = $('years'); if (y) y.value = defaults.years;
       const sp = $('sellPrice'); if (sp) sp.value = money(defaults.sellPrice);
       const sg = $('stockGrowth'); if (sg) sg.value = defaults.stockGrowthPct + '%';
+      const cg = $('capitalGainsTax'); if (cg) cg.value = defaults.capitalGainsTaxPct + '%';
       calculate();
     }
 
@@ -603,7 +587,7 @@
       if (!el) return;
       el.addEventListener('blur', ()=>formatMoneyInput(el));
     });
-    ['mortgageMultiplier','stockGrowth'].forEach(id=>{
+    ['mortgageMultiplier','stockGrowth','capitalGainsTax'].forEach(id=>{
       const el = $(id);
       if (!el) return;
       el.addEventListener('blur', ()=>formatPercentInput(el));
